@@ -1,11 +1,17 @@
 // Carvoeiro Nav service worker.
 // Bump VERSION whenever the app shell, routes, or manifest change.
 
-const VERSION = 'v1';
+const VERSION = 'v4';
 const SHELL_CACHE = `carvoeiro-nav-shell-${VERSION}`;
 const DATA_CACHE = `carvoeiro-nav-data-${VERSION}`;
 
-const SHELL_ASSETS = ['/', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png'];
+const BASE = self.location.pathname.replace(/sw\.js$/, '');
+const SHELL_ASSETS = [
+  BASE || '/',
+  `${BASE}manifest.webmanifest`,
+  `${BASE}icons/icon-192.png`,
+  `${BASE}icons/icon-512.png`,
+];
 
 const CACHEABLE_API_PREFIXES = ['/api/places', '/api/weather', '/api/search', '/api/events', '/api/home', '/api/flights'];
 
@@ -65,7 +71,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  const isDocument = request.destination === 'document' || url.pathname === '/' || url.pathname.endsWith('.html');
+  const isDocument =
+    request.destination === 'document' ||
+    url.pathname === BASE.replace(/\/$/, '') ||
+    url.pathname === BASE ||
+    url.pathname === '/' ||
+    url.pathname.endsWith('.html');
   if (isDocument) {
     event.respondWith(
       fetch(request)
