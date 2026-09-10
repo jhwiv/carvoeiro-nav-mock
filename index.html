@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Carvoeiro Nav — Mock</title>
+<style>
+  :root {
+    --navy: #122644;
+    --navy2: #1a3358;
+    --gold: #b88c3c;
+    --gold-soft: #e8d5a8;
+    --sand: #f6f1e8;
+    --ink: #1c1c1c;
+    --muted: #5a5f69;
+    --card: #ffffff;
+    --line: #e6e0d6;
+    --ok: #2f6b4f;
+    --phone-w: 390px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: #0c1524;
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+  }
+  .deck { max-width: 920px; width: 100%; color: #dce3ee; margin-bottom: 20px; }
+  .deck h1 { margin: 0 0 6px; font-size: 1.35rem; font-weight: 700; color: #fff; }
+  .deck p { margin: 0; font-size: 0.95rem; line-height: 1.45; color: #aeb8c8; }
+  .deck code { background: #1a2740; padding: 1px 6px; border-radius: 4px; color: var(--gold-soft); }
+  .stage {
+    display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; align-items: flex-start;
+  }
+  .phone {
+    width: var(--phone-w);
+    height: 780px;
+    background: var(--sand);
+    border-radius: 36px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,.45), inset 0 0 0 2px #2a3d5c;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .status {
+    height: 28px; background: var(--navy); color: #c9d3e2;
+    font-size: 11px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 18px; flex-shrink: 0;
+  }
+  .scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 12px; }
+  .hero {
+    background: linear-gradient(160deg, var(--navy) 0%, var(--navy2) 55%, #243f6a 100%);
+    color: #fff; padding: 18px 18px 22px; position: relative;
+  }
+  .brand-row { display: flex; align-items: center; gap: 12px; }
+  .logo {
+    width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,.08);
+    display: grid; place-items: center; border: 1px solid rgba(184,140,60,.45);
+  }
+  .logo svg { width: 34px; height: 34px; }
+  .brand-name { font-size: 11px; letter-spacing: .14em; color: var(--gold-soft); text-transform: uppercase; }
+  .brand-title { font-size: 1.35rem; font-weight: 700; margin-top: 2px; line-height: 1.15; }
+  .brand-sub { font-size: 12px; color: #b7c3d6; margin-top: 4px; }
+  .chips { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .chip {
+    border: 1.5px solid rgba(184,140,60,.55); color: var(--gold-soft);
+    background: transparent; border-radius: 999px; padding: 6px 12px; font-size: 12px;
+  }
+  .chip.on { background: var(--gold); color: var(--navy); border-color: var(--gold); font-weight: 600; }
+  .card {
+    background: var(--card); margin: 12px 14px 0; border-radius: 16px;
+    padding: 14px 14px 12px; box-shadow: 0 1px 2px rgba(18,38,68,.06);
+    border: 1px solid var(--line);
+  }
+  .card h2 { margin: 0 0 8px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--navy); }
+  .weather { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .temp { font-size: 2rem; font-weight: 700; color: var(--navy); line-height: 1; }
+  .wx-meta { font-size: 13px; color: var(--muted); line-height: 1.35; }
+  .event {
+    display: grid; grid-template-columns: 52px 1fr; gap: 10px; padding: 10px 0;
+    border-top: 1px solid var(--line);
+  }
+  .event:first-of-type { border-top: none; padding-top: 2px; }
+  .datebox {
+    background: var(--sand); border-radius: 10px; text-align: center; padding: 6px 4px;
+    border: 1px solid var(--line);
+  }
+  .datebox .d { font-size: 11px; color: var(--gold); font-weight: 700; text-transform: uppercase; }
+  .datebox .n { font-size: 1.1rem; font-weight: 700; color: var(--navy); }
+  .event h3 { margin: 0 0 2px; font-size: 14px; color: var(--ink); }
+  .event p { margin: 0; font-size: 12px; color: var(--muted); }
+  .search {
+    margin: 12px 14px 0; background: #fff; border: 1.5px solid var(--line);
+    border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: center;
+  }
+  .search input {
+    border: 0; outline: 0; width: 100%; font-size: 15px; background: transparent; color: var(--ink);
+  }
+  .search span { color: var(--muted); font-size: 16px; }
+  .hint {
+    margin: 8px 18px 0; font-size: 11px; color: var(--muted); text-align: center;
+  }
+  .panel { display: none; padding: 12px 0 20px; }
+  .panel.active { display: block; }
+  .list-item {
+    display: flex; gap: 12px; align-items: flex-start; padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .list-item:last-child { border-bottom: 0; }
+  .badge {
+    width: 40px; height: 40px; border-radius: 12px; background: var(--sand);
+    display: grid; place-items: center; font-size: 18px; flex-shrink: 0;
+    border: 1px solid var(--line);
+  }
+  .list-item h3 { margin: 0 0 2px; font-size: 15px; }
+  .list-item p { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.35; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .tag {
+    font-size: 11px; padding: 4px 8px; border-radius: 999px;
+    border: 1.5px solid var(--gold); color: var(--navy); background: transparent;
+  }
+  .tag.on { background: var(--gold); color: #fff; }
+  .fav-row {
+    display: flex; align-items: center; gap: 10px; padding: 10px 0;
+    border-bottom: 1px solid var(--line); font-size: 14px;
+  }
+  .fav-row input { width: 18px; height: 18px; accent-color: var(--gold); }
+  .flight-form label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
+  .flight-form select, .flight-form input {
+    width: 100%; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--line);
+    font-size: 14px; background: #fff;
+  }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .btn {
+    margin-top: 14px; width: 100%; border: 0; border-radius: 12px; padding: 12px;
+    background: var(--navy); color: #fff; font-weight: 600; font-size: 15px; cursor: pointer;
+  }
+  .btn.secondary { background: transparent; color: var(--navy); border: 1.5px solid var(--navy); }
+  .flight-card {
+    margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--sand);
+    border: 1px solid var(--line); font-size: 13px;
+  }
+  .flight-card strong { color: var(--navy); }
+  .pill { display: inline-block; background: #dcefe4; color: var(--ok); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .tabbar {
+    flex-shrink: 0; height: 64px; background: #fff; border-top: 1px solid var(--line);
+    display: grid; grid-template-columns: repeat(5, 1fr); padding: 6px 4px 10px;
+  }
+  .tab {
+    border: 0; background: transparent; font-size: 10px; color: var(--muted);
+    display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer;
+  }
+  .tab .ico { font-size: 18px; line-height: 1.2; }
+  .tab.active { color: var(--navy); font-weight: 700; }
+  .tab.active .ico { filter: none; }
+  .aside {
+    width: min(420px, 100%); color: #c5d0e0; font-size: 14px; line-height: 1.5;
+    background: #132038; border: 1px solid #243552; border-radius: 16px; padding: 16px 18px;
+  }
+  .aside h2 { margin: 0 0 8px; color: #fff; font-size: 1rem; }
+  .aside ul { margin: 0; padding-left: 18px; }
+  .aside li { margin: 6px 0; }
+  .aside .muted { color: #8b97ab; font-size: 12px; margin-top: 12px; }
+  @media (max-width: 860px) {
+    .phone { height: min(780px, 92vh); }
+  }
+</style>
+</head>
+<body>
+  <div class="deck">
+    <h1>Carvoeiro Nav — visual mock</h1>
+    <p>Same IA as Babcock Nav. Home stops at search. Brand from Rocha Brava (navy / gold). Domain: <code>carvoeironav.com</code>. Tap the bottom tabs.</p>
+  </div>
+
+  <div class="stage">
+    <div class="phone" id="app">
+      <div class="status"><span>9:41</span><span>Carvoeiro · LTE</span></div>
+
+      <!-- HOME -->
+      <div class="scroll panel active" data-panel="home">
+        <div class="hero">
+          <div class="brand-row">
+            <div class="logo" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M30 8h4v6h-4V8zm2 6c-6 0-10 4-10 10v4h4v24h12V28h4v-4c0-6-4-10-10-10z" fill="#122644"/>
+                <path d="M12 48c8-6 16-6 20-2 4-4 12-4 20 2" stroke="#122644" stroke-width="3" fill="none"/>
+                <path d="M10 54c9-5 18-5 22-1 5-4 14-4 22 1" stroke="#b88c3c" stroke-width="3" fill="none"/>
+                <circle cx="40" cy="14" r="1.6" fill="#b88c3c"/>
+                <circle cx="45" cy="17" r="1.6" fill="#b88c3c"/>
+                <circle cx="49" cy="21" r="1.6" fill="#b88c3c"/>
+                <circle cx="51" cy="26" r="1.6" fill="#b88c3c"/>
+              </svg>
+            </div>
+            <div>
+              <div class="brand-name">Carvoeiro Nav</div>
+              <div class="brand-title">Rocha Brava &amp; town</div>
+              <div class="brand-sub">Alfanzina · Carvoeiro · Algarve</div>
+            </div>
+          </div>
+          <div class="chips">
+            <span class="chip on">In town</span>
+            <span class="chip">Everywhere</span>
+            <span class="chip">Outside town</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Weather</h2>
+          <div class="weather">
+            <div>
+              <div class="temp">24°</div>
+              <div class="wx-meta">Partly sunny · Light N breeze<br/>Sea 21° · UV 6</div>
+            </div>
+            <div style="font-size:42px">🌤️</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>What’s On · next 5 days</h2>
+          <div class="event">
+            <div class="datebox"><div class="d">Thu</div><div class="n">10</div></div>
+            <div><h3>Sunset at Algar Seco</h3><p>Golden hour · boardwalk &amp; caves · free</p></div>
+          </div>
+          <div class="event">
+            <div class="datebox"><div class="d">Fri</div><div class="n">11</div></div>
+            <div><h3>Carvoeiro boardwalk stroll</h3><p>Morning · café stops on Rua do Barranco</p></div>
+          </div>
+          <div class="event">
+            <div class="datebox"><div class="d">Sat</div><div class="n">12</div></div>
+            <div><h3>Lagoa market</h3><p>Fresh produce &amp; crafts · ~15 min drive</p></div>
+          </div>
+          <div class="event">
+            <div class="datebox"><div class="d">Sun</div><div class="n">13</div></div>
+            <div><h3>Beach club day · Vale de Centeanes</h3><p>Loungers · lunch · family friendly</p></div>
+          </div>
+          <div class="event">
+            <div class="datebox"><div class="d">Mon</div><div class="n">14</div></div>
+            <div><h3>Benagil / Marinha boat</h3><p>Book morning slot · sea conditions apply</p></div>
+          </div>
+        </div>
+
+        <div class="search">
+          <span>⌕</span>
+          <input type="search" placeholder="What do you need?" aria-label="Search" />
+        </div>
+        <p class="hint">Home ends here — same rule as Babcock. Everything else lives in tabs.</p>
+      </div>
+
+      <!-- PLACES -->
+      <div class="scroll panel" data-panel="places">
+        <div class="hero" style="padding-bottom:14px">
+          <div class="brand-title" style="font-size:1.2rem">Places</div>
+          <div class="brand-sub">Eat · beaches · viewpoints · services</div>
+          <div class="chips">
+            <span class="chip on">Eat</span>
+            <span class="chip">Beach</span>
+            <span class="chip">View</span>
+            <span class="chip">Shop</span>
+            <span class="chip">Health</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="list-item">
+            <div class="badge">🍽️</div>
+            <div>
+              <h3>O Barco</h3>
+              <p>Seafood on the cliff · book ahead in season</p>
+              <div class="tags"><span class="tag on">In town</span><span class="tag">Maps</span><span class="tag">Waze</span></div>
+            </div>
+          </div>
+          <div class="list-item">
+            <div class="badge">🏖️</div>
+            <div>
+              <h3>Praia de Carvoeiro</h3>
+              <p>Town beach · cafés · paddleboard rentals</p>
+              <div class="tags"><span class="tag on">In town</span><span class="tag">Family</span></div>
+            </div>
+          </div>
+          <div class="list-item">
+            <div class="badge">🪨</div>
+            <div>
+              <h3>Algar Seco</h3>
+              <p>Sea caves &amp; boardwalk · sunset favorite</p>
+              <div class="tags"><span class="tag on">In town</span><span class="tag">Free</span></div>
+            </div>
+          </div>
+          <div class="list-item">
+            <div class="badge">🏡</div>
+            <div>
+              <h3>Rocha Brava Village Resort</h3>
+              <p>Home base · Urbanização Rocha Brava, Alfanzina</p>
+              <div class="tags"><span class="tag on">Home</span><span class="tag">Pool</span><span class="tag">Tennis</span></div>
+            </div>
+          </div>
+          <div class="list-item">
+            <div class="badge">🛒</div>
+            <div>
+              <h3>Intermarché / Continente Bom Dia</h3>
+              <p>Groceries · Lagoa corridor</p>
+              <div class="tags"><span class="tag">Outside town</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAVORITES -->
+      <div class="scroll panel" data-panel="favorites">
+        <div class="hero" style="padding-bottom:14px">
+          <div class="brand-title" style="font-size:1.2rem">Favorites</div>
+          <div class="brand-sub">What I care about · one list</div>
+          <div class="chips">
+            <span class="chip on">Everywhere</span>
+            <span class="chip">In town</span>
+            <span class="chip">Outside town</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="fav-row"><input type="checkbox" checked /> Beach days</div>
+          <div class="fav-row"><input type="checkbox" checked /> Cliff walks / boardwalk</div>
+          <div class="fav-row"><input type="checkbox" checked /> Fresh seafood</div>
+          <div class="fav-row"><input type="checkbox" /> Golf (Pestana / Vale do Milho)</div>
+          <div class="fav-row"><input type="checkbox" checked /> Boat to Benagil</div>
+          <div class="fav-row"><input type="checkbox" /> Tennis at Rocha Brava</div>
+          <div class="fav-row"><input type="checkbox" /> Sunset drinks</div>
+          <div class="fav-row"><input type="checkbox" /> Day trip · Lagos</div>
+          <div class="fav-row"><input type="checkbox" /> Day trip · Lisbon</div>
+        </div>
+      </div>
+
+      <!-- FLIGHTS (replaces personal calendar) -->
+      <div class="scroll panel" data-panel="flights">
+        <div class="hero" style="padding-bottom:14px">
+          <div class="brand-title" style="font-size:1.2rem">Flights</div>
+          <div class="brand-sub">East Coast ↔ Lisbon · then Algarve</div>
+        </div>
+        <div class="card flight-form">
+          <div class="row2">
+            <div>
+              <label>From</label>
+              <select><option selected>EWR — Newark</option><option>JFK — New York</option><option>BOS — Boston</option></select>
+            </div>
+            <div>
+              <label>To</label>
+              <select><option selected>LIS — Lisbon</option><option>FAO — Faro (alt)</option></select>
+            </div>
+          </div>
+          <div class="row2">
+            <div>
+              <label>Depart</label>
+              <input type="date" value="2026-10-03" />
+            </div>
+            <div>
+              <label>Return</label>
+              <input type="date" value="2026-10-17" />
+            </div>
+          </div>
+          <label>Airline</label>
+          <select>
+            <option selected>Any</option>
+            <option>TAP Air Portugal</option>
+            <option>United</option>
+            <option>Delta</option>
+            <option>American</option>
+          </select>
+          <label>Preferred time</label>
+          <select>
+            <option>Any</option>
+            <option selected>Morning depart</option>
+            <option>Afternoon</option>
+            <option>Evening / overnight</option>
+          </select>
+          <button class="btn" type="button" onclick="document.getElementById('results').hidden=false">Find flights</button>
+          <div id="results" hidden>
+            <div class="flight-card">
+              <span class="pill">SAMPLE</span><br/>
+              <strong>TAP TP202</strong> · EWR → LIS · 22:05–10:15+1<br/>
+              Nonstop · ~7h 10m · economy from example fare
+            </div>
+            <div class="flight-card">
+              <span class="pill">SAMPLE</span><br/>
+              <strong>United UA144</strong> · EWR → LIS · 17:30–06:55+1<br/>
+              Nonstop · then transfer / drive to Carvoeiro (~2.5–3h)
+            </div>
+            <p class="hint" style="text-align:left;margin:10px 0 0">v1 = picker + curated/sample times. Live fares when you add an API key.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MORE / SAFETY (Algarve stand-in for ranch hurricane tab) -->
+      <div class="scroll panel" data-panel="more">
+        <div class="hero" style="padding-bottom:14px">
+          <div class="brand-title" style="font-size:1.2rem">More</div>
+          <div class="brand-sub">Safety · transport · Rocha Brava</div>
+        </div>
+        <div class="card">
+          <div class="list-item">
+            <div class="badge">🚑</div>
+            <div><h3>Emergency</h3><p>EU emergency 112 · SNS 24: 808 24 24 24</p></div>
+          </div>
+          <div class="list-item">
+            <div class="badge">🌊</div>
+            <div><h3>Beach &amp; sea flags</h3><p>Rip currents · jellyfish season tips</p></div>
+          </div>
+          <div class="list-item">
+            <div class="badge">🚗</div>
+            <div><h3>LIS → Carvoeiro</h3><p>Rental car A2/A22 · or train to Tunes + taxi</p></div>
+          </div>
+          <div class="list-item">
+            <div class="badge">🏨</div>
+            <div>
+              <h3>Rocha Brava desk</h3>
+              <p>Tel (+351) 282 350 370 · Bookings 282 350 375</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="tabbar" aria-label="Main">
+        <button class="tab active" data-tab="home"><span class="ico">⌂</span>Home</button>
+        <button class="tab" data-tab="places"><span class="ico">◎</span>Places</button>
+        <button class="tab" data-tab="favorites"><span class="ico">★</span>Favorites</button>
+        <button class="tab" data-tab="flights"><span class="ico">✈</span>Flights</button>
+        <button class="tab" data-tab="more"><span class="ico">☰</span>More</button>
+      </nav>
+    </div>
+
+    <aside class="aside">
+      <h2>What’s in this mock</h2>
+      <ul>
+        <li><strong>Home</strong> — Hero → Weather → What’s On (5 days) → Search → stop</li>
+        <li><strong>Places</strong> — category chips + Maps/Waze-style actions</li>
+        <li><strong>Favorites</strong> — one “what I care about” list + locality chips</li>
+        <li><strong>Flights</strong> — EWR↔LIS airline + time picker (replaces personal calendar)</li>
+        <li><strong>More</strong> — safety / transfer / Rocha Brava contacts (no realtor)</li>
+      </ul>
+      <p class="muted">Sample content only — not live data. Production will match Babcock polish (PWA, SW, real feeds). Open this file in Chrome on phone or desktop.</p>
+    </aside>
+  </div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.panel');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelector(`[data-panel="${tab.dataset.tab}"]`).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
